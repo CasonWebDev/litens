@@ -18,7 +18,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        roboto: ["Roboto", "sans-serif"],
+        alibaba: ["alibaba-sans", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",

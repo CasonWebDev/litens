@@ -39,98 +39,104 @@ const SearchResults = () => {
         <div className="flex-1">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead>
-                <tr className="bg-primary text-primary-foreground text-sm rounded-t-lg overflow-hidden">
-                  <th className="py-2 px-3 text-left font-medium rounded-tl-lg">
+              <thead className="mb-4">
+                <tr className="bg-primary text-primary-foreground text-sm overflow-hidden">
+                  <th width="10%" className="py-2 px-3 text-left font-bold rounded-tl-lg rounded-bl-lg">
                     <span className="flex items-center gap-1">
                       CÓDIGO <ChevronDown size={14} />
                     </span>
                   </th>
-                  <th className="py-2 px-3 text-left font-medium">DESCRIÇÃO</th>
-                  <th className="py-2 px-3 text-center font-medium">LANÇ.</th>
-                  <th className="py-2 px-3 text-center font-medium rounded-tr-lg">REL.</th>
+                  <th width="65%" className="py-2 px-3 text-left font-bold">DESCRIÇÃO</th>
+                  <th width="8%" className="py-2 px-3 text-center font-bold">LANÇ.</th>
+                  <th width="8%" className="py-2 px-3 text-center font-bold rounded-tr-lg rounded-br-lg">REL.</th>
                 </tr>
               </thead>
-              <tbody>
-                {products.map((product, index) => (
-                  <tr
-                    key={index}
-                    className={`border-b border-border text-sm ${index % 2 === 0 ? 'bg-background' : 'bg-muted/30'}`}
-                  >
-                    <td className="py-2 px-3">
-                      <span className="flex items-center gap-2">
-                        <Star
-                          size={14}
-                          className={product.starred ? "fill-primary text-primary" : "text-muted-foreground"}
-                        />
-                        {product.code}
-                      </span>
-                    </td>
-                    <td className="py-2 px-3 text-foreground">{product.description}</td>
-                    <td className="py-2 px-3 text-center">
-                      <input type="checkbox" className="w-4 h-4 accent-primary" />
-                    </td>
-                    <td className="py-2 px-3 text-center">
-                      <input type="checkbox" className="w-4 h-4 accent-primary" />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
             </table>
+            <div className="h-128 overflow-y-auto">
+              <table className="w-full">
+                <tbody>
+                  {products.map((product, index) => (
+                    <tr
+                      key={index}
+                      className={`border-b border-border text-sm ${index % 2 === 0 ? 'bg-background' : 'bg-muted/30'}`}
+                    >
+                      <td width="10%" className="py-2 px-3 border-r border-border">
+                        <span className="flex items-center gap-2">
+                          <Star
+                            size={14}
+                            className={product.starred ? "fill-primary text-primary" : "text-muted-foreground"}
+                          />
+                          {product.code}
+                        </span>
+                      </td>
+                      <td width="65%" className="py-2 px-3 border-r border-border text-foreground">{product.description}</td>
+                      <td width="8%" className="py-2 px-3 text-center border-r border-border">
+
+                      </td>
+                      <td width="8%" className="py-2 px-3 text-center">
+
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
           <p className="text-center text-sm text-muted-foreground mt-3">56 PRODUTOS ENCONTRADOS</p>
         </div>
 
         {/* Technical Info Panel */}
         <div className="lg:w-72">
-          <div className="bg-primary text-primary-foreground py-2 px-4 font-medium text-sm rounded-t-lg">
+          <div className="bg-primary text-primary-foreground py-2 px-4 font-bold text-sm rounded-lg">
             INF. TÉCNICAS
           </div>
-          <div className="border border-border border-t-0 p-4 space-y-3 text-sm rounded-b-lg">
-            <div>
-              <span className="text-primary font-medium">▶ Tampa:</span>
-              <span className="text-foreground ml-1">920918</span>
-            </div>
-            <div>
-              <span className="text-muted-foreground">Diâmetro da tampa:</span>
-              <span className="text-foreground ml-1">48mm</span>
-            </div>
-            <div>
-              <span className="text-muted-foreground">Número de filetes (F):</span>
-              <span className="text-foreground ml-1">6</span>
-            </div>
-            <div>
-              <span className="text-muted-foreground">Diâmetro topo filete dob - 1.8 (TF):</span>
-              <span className="text-foreground ml-1">58</span>
-            </div>
-            <div>
-              <span className="text-muted-foreground">Diâmetro rebaixo eixo instalação (EI):</span>
-              <span className="text-foreground ml-1"></span>
+          <div className="h-128 overflow-y-auto">
+            <div className="p-4 space-y-3 text-sm rounded-b-lg">
+              <div className="border-b border-border pt-2 pb-4">
+                <span className="text-primary font-bold">▶ Tampa:</span>
+                <span className="text-foreground ml-1">920918</span>
+              </div>
+              <div className="border-b border-border pt-2 pb-4">
+                <span className="text-muted-foreground font-bold">Diâmetro da tampa:</span>
+                <span className="text-foreground ml-1">48mm</span>
+              </div>
+              <div className="border-b border-border pt-2 pb-4">
+                <span className="text-muted-foreground font-bold">Número de filetes (F):</span>
+                <span className="text-foreground ml-1">6</span>
+              </div>
+              <div className="border-b border-border pt-2 pb-4">
+                <span className="text-muted-foreground font-bold">Diâmetro topo filete dob - 1.8 (TF):</span>
+                <span className="text-foreground ml-1">58</span>
+              </div>
+              <div className="border-b border-border pt-2 pb-4">
+                <span className="text-muted-foreground font-bold">Diâmetro rebaixo eixo instalação (EI):</span>
+                <span className="text-foreground ml-1"></span>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Product Details Section */}
-      <div className="mt-8">
+      <div className="mt-3">
         {/* Product Title */}
-        <div className="bg-litens-lightBlue text-litens-blue py-2 px-4 font-medium text-base rounded-lg mb-4">
+        <div className="bg-litens-lightBlue text-litens-blue py-2 px-4 font-bold text-base rounded-lg mb-4">
           Produto: POLIA DO ALTERNADOR DESACOPLADORA OAD
         </div>
 
         <div className="flex flex-col lg:flex-row rounded-b-lg overflow-hidden rounded-lg">
           {/* Original/Conversion Section */}
           <div className="lg:w-56">
-            <div className="bg-primary text-primary-foreground py-2 px-3 font-medium text-sm rounded-bl-lg">
+            <div className="bg-primary text-primary-foreground py-2 px-3 font-bold text-sm rounded-bl-lg">
               ORIGINAL / CONVERSÃO
             </div>
             <div className="h-48 overflow-y-auto">
               {originalConversionData.map((item, index) => (
                 <div key={index} className="border-b border-border">
-                  <div className={`py-2 px-3 text-sm ${item.type === 'original' ? 'text-accent' : 'text-primary'} font-medium`}>
+                  <div className={`py-2 px-3 text-sm text-accent font-bold`}>
                     {item.brand}
                   </div>
-                  <div className="py-1 px-3 text-sm text-foreground pb-2">
+                  <div className="py-1 px-3 text-sm text-foreground pb-2 font-bold">
                     {item.code}
                   </div>
                 </div>
@@ -143,10 +149,10 @@ const SearchResults = () => {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-primary text-primary-foreground">
-                  <th className="py-2 px-3 text-left font-medium">MODELO</th>
-                  <th className="py-2 px-3 text-left font-medium">COMBUSTÍVEL</th>
-                  <th className="py-2 px-3 text-left font-medium">MOTOR</th>
-                  <th className="py-2 px-3 text-left font-medium">NOME DO MOTOR</th>
+                  <th className="py-2 px-3 text-left font-bold">MODELO</th>
+                  <th className="py-2 px-3 text-left font-bold">COMBUSTÍVEL</th>
+                  <th className="py-2 px-3 text-left font-bold">MOTOR</th>
+                  <th className="py-2 px-3 text-left font-bold">NOME DO MOTOR</th>
                 </tr>
               </thead>
             </table>
@@ -156,12 +162,12 @@ const SearchResults = () => {
                   {vehicleData.map((row, index) => (
                     <tr key={index} className="border-b border-border">
                       <td className="py-2 px-3">
-                        {row.brand && <div className="text-accent font-medium">{row.brand}</div>}
-                        <div className="text-foreground">{row.model}</div>
+                        {row.brand && <div className="text-accent font-bold">{row.brand}</div>}
+                        <div className="text-foreground font-bold">{row.model}</div>
                       </td>
-                      <td className="py-2 px-3 text-foreground">{row.fuel}</td>
-                      <td className="py-2 px-3 text-foreground">{row.motor}</td>
-                      <td className="py-2 px-3 text-foreground">{row.motorName}</td>
+                      <td className="py-2 px-3 text-foreground font-bold">{row.fuel}</td>
+                      <td className="py-2 px-3 text-foreground font-bold">{row.motor}</td>
+                      <td className="py-2 px-3 text-foreground font-bold">{row.motorName}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -171,7 +177,7 @@ const SearchResults = () => {
 
           {/* Product Photo Section */}
           <div className="lg:w-48">
-            <div className="bg-primary text-primary-foreground py-2 px-3 font-medium text-sm text-center rounded-br-lg">
+            <div className="bg-primary text-primary-foreground py-2 px-3 font-bold text-sm text-center rounded-br-lg">
               FOTO DO PRODUTO
             </div>
             <div className="h-48 flex flex-col items-center justify-center p-4">

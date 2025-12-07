@@ -31,7 +31,7 @@ const SearchMenu = () => {
           <div className="flex justify-center gap-8 py-4 border-b border-border">
             <button
               onClick={() => setActiveTab("codigo")}
-              className={`text-sm md:text-base font-medium transition-colors ${activeTab === "codigo"
+              className={`text-sm md:text-base font-bold transition-colors ${activeTab === "codigo"
                 ? "text-primary border-b-2 border-primary pb-1"
                 : "text-muted-foreground hover:text-primary"
                 }`}
@@ -40,7 +40,7 @@ const SearchMenu = () => {
             </button>
             <button
               onClick={() => setActiveTab("veiculo")}
-              className={`text-sm md:text-base font-medium transition-colors ${activeTab === "veiculo"
+              className={`text-sm md:text-base font-bold transition-colors ${activeTab === "veiculo"
                 ? "text-primary border-b-2 border-primary pb-1"
                 : "text-muted-foreground hover:text-primary"
                 }`}
@@ -60,10 +60,10 @@ const SearchMenu = () => {
                     value={searchValue}
                     onChange={(e) => setSearchValue(e.target.value)}
                     placeholder="BUSCA POR CÓDIGO DA PEÇA"
-                    className="w-full pl-12 pr-4 py-3 border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                    className="w-full pl-12 pr-4 py-3 font-bold border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                   />
                 </div>
-                <label className="flex items-center gap-2 text-sm text-muted-foreground">
+                <label className="flex items-center gap-2 text-sm text-muted-foreground font-bold">
                   <X size={14} className="border border-muted-foreground" />
                   BUSCA POR QUALQUER PARTE DO CÓDIGO DA PEÇA
                 </label>
@@ -75,12 +75,12 @@ const SearchMenu = () => {
                   <input
                     type="text"
                     placeholder="BUSCA POR VEÍCULO"
-                    className="w-full pl-12 pr-4 py-3 border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                    className="w-full pl-12 pr-4 py-3 font-bold border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                   />
                 </div>
 
                 {/* Filters */}
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-3 font-bold">
                   <div>
                     <label className="block text-xs text-muted-foreground mb-1 uppercase">Segmento</label>
                     <select className="w-full px-3 py-2 border border-border rounded text-sm text-foreground bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
@@ -119,14 +119,14 @@ const SearchMenu = () => {
             <div className="flex justify-center gap-4 mt-6">
               <button
                 onClick={() => { setSearchValue(""); setShowResults(false); }}
-                className="flex items-center gap-2 px-6 py-2 border-2 border-primary text-primary rounded font-medium hover:bg-primary hover:text-primary-foreground transition-colors"
+                className="flex items-center gap-2 px-6 py-2 border-2 border-primary text-primary rounded font-bold hover:bg-primary hover:text-primary-foreground transition-colors"
               >
                 <Trash2 size={18} />
                 LIMPAR
               </button>
               <button
                 onClick={() => setShowResults(true)}
-                className="flex items-center gap-2 px-6 py-2 bg-primary text-primary-foreground rounded font-medium hover:bg-primary/90 transition-colors"
+                className="flex items-center gap-2 px-6 py-2 bg-primary text-primary-foreground rounded font-bold hover:bg-primary/90 transition-colors"
               >
                 <Search size={18} />
                 BUSCAR
@@ -142,9 +142,9 @@ const SearchMenu = () => {
         className="absolute -bottom-72 -right-0 w-[600px] h-[600px] pointer-events-none z-[1]"
         style={{
           backgroundImage: `url(${backgroundCircle})`,
-          backgroundSize: '330px',
+          backgroundSize: '300px',
           backgroundRepeat: 'no-repeat',
-          backgroundPosition: '115% center',
+          backgroundPosition: '110% center',
         }}
       />
     </section>

@@ -38,13 +38,13 @@ const ProductsCarousel = () => {
             {products.map((product, index) => (
               <div key={index} className="flex flex-col items-center group cursor-pointer">
                 <div className="w-20 h-20 md:w-28 md:h-28 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
-                  <img 
-                    src={product.image} 
+                  <img
+                    src={product.image}
                     alt={product.name}
                     className="w-full h-full object-contain"
                   />
                 </div>
-                <span className="text-primary font-medium text-sm md:text-base text-center">
+                <span className="text-primary font-bold text-sm md:text-base text-center">
                   {product.name}
                 </span>
               </div>
