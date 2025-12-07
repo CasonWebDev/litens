@@ -1,7 +1,20 @@
+import backgroundCircle from "@/assets/background-circle.png";
+
 const Footer = () => {
   return (
-    <footer className="bg-background border-t border-border">
-      <div className="container py-12">
+    <footer className="bg-background border-t border-border relative overflow-hidden">
+      {/* Background circle decoration */}
+      <div 
+        className="absolute -bottom-64 -right-32 w-[600px] h-[600px] pointer-events-none"
+        style={{
+          backgroundImage: `url(${backgroundCircle})`,
+          backgroundSize: 'contain',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center',
+        }}
+      />
+      
+      <div className="container py-12 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Logo and Contact Form */}
           <div className="md:col-span-1">
@@ -18,12 +31,12 @@ const Footer = () => {
               <input
                 type="text"
                 placeholder="NOME"
-                className="px-3 py-2 border border-border rounded text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                className="px-3 py-2 border border-border rounded text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-background"
               />
               <input
                 type="email"
                 placeholder="E-MAIL"
-                className="px-3 py-2 border border-border rounded text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                className="px-3 py-2 border border-border rounded text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-background"
               />
               <button className="bg-primary text-primary-foreground px-4 py-2 rounded text-sm font-medium hover:bg-primary/90 transition-colors self-start">
                 ENVIAR
@@ -57,12 +70,6 @@ const Footer = () => {
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Bottom gradient decoration */}
-      <div className="h-32 bg-gradient-green relative overflow-hidden">
-        <div className="absolute right-1/4 -bottom-16 w-64 h-64 bg-accent/30 rounded-full blur-3xl" />
-        <div className="absolute right-1/3 -bottom-8 w-48 h-48 bg-litens-lightBlue/30 rounded-full blur-2xl" />
       </div>
     </footer>
   );
