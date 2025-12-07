@@ -26,11 +26,11 @@ const ProductsCarousel = () => {
 
         <div className="relative">
           {/* Navigation arrows */}
-          <button className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 md:-translate-x-4 w-8 h-8 md:w-10 md:h-10 bg-accent text-accent-foreground rounded-full flex items-center justify-center hover:bg-accent/90 transition-colors z-10">
-            <ChevronLeft size={24} />
+          <button className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 md:-translate-x-4 w-6 h-6 md:w-8 md:h-8 bg-litens-gray text-foreground rounded-full flex items-center justify-center hover:bg-litens-gray/80 transition-colors z-10">
+            <ChevronLeft size={16} />
           </button>
-          <button className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 md:translate-x-4 w-8 h-8 md:w-10 md:h-10 bg-accent text-accent-foreground rounded-full flex items-center justify-center hover:bg-accent/90 transition-colors z-10">
-            <ChevronRight size={24} />
+          <button className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 md:translate-x-4 w-6 h-6 md:w-8 md:h-8 bg-litens-gray text-foreground rounded-full flex items-center justify-center hover:bg-litens-gray/80 transition-colors z-10">
+            <ChevronRight size={16} />
           </button>
 
           {/* Products grid */}
