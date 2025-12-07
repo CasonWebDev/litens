@@ -6,7 +6,7 @@ const Footer = () => {
     <footer className="bg-background border-t border-border relative overflow-hidden">
       {/* Background circle decoration */}
       <div
-        className="absolute -bottom-64 right-80 w-[600px] h-[600px] pointer-events-none"
+        className="absolute -bottom-64 right-[15vw] w-[600px] h-[600px] pointer-events-none"
         style={{
           backgroundImage: `url(${backgroundCircle})`,
           backgroundSize: '200px',
