@@ -1,4 +1,5 @@
 import { Facebook, Instagram, Linkedin, Menu, X } from "lucide-react";
+import logo from "@/assets/logo.png";
 import { useState } from "react";
 
 const Header = () => {
@@ -36,12 +37,7 @@ const Header = () => {
           {/* Logo */}
           <div className="flex items-center">
             <div className="text-primary">
-              <svg width="140" height="40" viewBox="0 0 140 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="0" y="8" width="24" height="24" rx="4" fill="currentColor"/>
-                <text x="5" y="24" fill="white" fontSize="10" fontWeight="bold">Q</text>
-                <text x="28" y="26" fill="currentColor" fontSize="20" fontWeight="bold" fontFamily="Roboto">Litens</text>
-                <text x="28" y="36" fill="currentColor" fontSize="8" fontFamily="Roboto" letterSpacing="2">AFTERMARKET</text>
-              </svg>
+              <img src={logo} width={140} />
             </div>
           </div>
 
@@ -59,7 +55,7 @@ const Header = () => {
           </div>
 
           {/* Mobile menu button */}
-          <button 
+          <button
             className="lg:hidden text-primary"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >

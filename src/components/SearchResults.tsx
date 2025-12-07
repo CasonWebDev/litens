@@ -53,15 +53,15 @@ const SearchResults = () => {
               </thead>
               <tbody>
                 {products.map((product, index) => (
-                  <tr 
-                    key={index} 
+                  <tr
+                    key={index}
                     className={`border-b border-border text-sm ${index % 2 === 0 ? 'bg-background' : 'bg-muted/30'}`}
                   >
                     <td className="py-2 px-3">
                       <span className="flex items-center gap-2">
-                        <Star 
-                          size={14} 
-                          className={product.starred ? "fill-primary text-primary" : "text-muted-foreground"} 
+                        <Star
+                          size={14}
+                          className={product.starred ? "fill-primary text-primary" : "text-muted-foreground"}
                         />
                         {product.code}
                       </span>
@@ -114,14 +114,14 @@ const SearchResults = () => {
       {/* Product Details Section */}
       <div className="mt-8">
         {/* Product Title */}
-        <div className="bg-litens-lightBlue text-primary-foreground py-3 px-4 font-medium text-base rounded-t-lg">
+        <div className="bg-litens-lightBlue text-litens-blue py-2 px-4 font-medium text-base rounded-lg mb-4">
           Produto: POLIA DO ALTERNADOR DESACOPLADORA OAD
         </div>
-        
-        <div className="flex flex-col lg:flex-row border border-litens-lightBlue border-t-0 rounded-b-lg overflow-hidden">
+
+        <div className="flex flex-col lg:flex-row rounded-b-lg overflow-hidden rounded-lg">
           {/* Original/Conversion Section */}
-          <div className="lg:w-56 border-r border-border">
-            <div className="bg-primary text-primary-foreground py-2 px-3 font-medium text-sm">
+          <div className="lg:w-56">
+            <div className="bg-primary text-primary-foreground py-2 px-3 font-medium text-sm rounded-bl-lg">
               ORIGINAL / CONVERSÃO
             </div>
             <div className="h-48 overflow-y-auto">
@@ -139,7 +139,7 @@ const SearchResults = () => {
           </div>
 
           {/* Vehicle Data Table */}
-          <div className="flex-1 border-r border-border">
+          <div className="flex-1">
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-primary text-primary-foreground">
@@ -171,7 +171,7 @@ const SearchResults = () => {
 
           {/* Product Photo Section */}
           <div className="lg:w-48">
-            <div className="bg-primary text-primary-foreground py-2 px-3 font-medium text-sm text-center">
+            <div className="bg-primary text-primary-foreground py-2 px-3 font-medium text-sm text-center rounded-br-lg">
               FOTO DO PRODUTO
             </div>
             <div className="h-48 flex flex-col items-center justify-center p-4">

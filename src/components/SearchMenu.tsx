@@ -1,6 +1,8 @@
 import { Search, Trash2, X } from "lucide-react";
 import { useState } from "react";
 import SearchResults from "./SearchResults";
+import bgLinhas from "@/assets/bglinhas.png";
+import backgroundCircle from "@/assets/background-circle.png";
 
 const SearchMenu = () => {
   const [activeTab, setActiveTab] = useState<"codigo" | "veiculo">("codigo");
@@ -8,8 +10,15 @@ const SearchMenu = () => {
   const [showResults, setShowResults] = useState(true);
 
   return (
-    <section className="bg-secondary py-8 md:py-12">
-      <div className="container">
+    <section className="bg-secondary py-8 md:py-12"
+      style={{
+        backgroundImage: `url(${bgLinhas})`,
+        backgroundSize: 'auto',
+        backgroundRepeat: 'no-repeat',
+        backgroundPosition: '-20% -50%',
+      }}
+    >
+      <div className="container relative z-[2]">
         <div className="bg-background rounded-lg shadow-lg overflow-hidden max-w-4xl mx-auto">
           {/* Header */}
           <div className="bg-primary py-4 px-6">
@@ -22,21 +31,19 @@ const SearchMenu = () => {
           <div className="flex justify-center gap-8 py-4 border-b border-border">
             <button
               onClick={() => setActiveTab("codigo")}
-              className={`text-sm md:text-base font-medium transition-colors ${
-                activeTab === "codigo"
-                  ? "text-primary border-b-2 border-primary pb-1"
-                  : "text-muted-foreground hover:text-primary"
-              }`}
+              className={`text-sm md:text-base font-medium transition-colors ${activeTab === "codigo"
+                ? "text-primary border-b-2 border-primary pb-1"
+                : "text-muted-foreground hover:text-primary"
+                }`}
             >
               CÓDIGO DA PEÇA
             </button>
             <button
               onClick={() => setActiveTab("veiculo")}
-              className={`text-sm md:text-base font-medium transition-colors ${
-                activeTab === "veiculo"
-                  ? "text-primary border-b-2 border-primary pb-1"
-                  : "text-muted-foreground hover:text-primary"
-              }`}
+              className={`text-sm md:text-base font-medium transition-colors ${activeTab === "veiculo"
+                ? "text-primary border-b-2 border-primary pb-1"
+                : "text-muted-foreground hover:text-primary"
+                }`}
             >
               VEÍCULO
             </button>
@@ -110,14 +117,14 @@ const SearchMenu = () => {
 
             {/* Action Buttons */}
             <div className="flex justify-center gap-4 mt-6">
-              <button 
+              <button
                 onClick={() => { setSearchValue(""); setShowResults(false); }}
                 className="flex items-center gap-2 px-6 py-2 border-2 border-primary text-primary rounded font-medium hover:bg-primary hover:text-primary-foreground transition-colors"
               >
                 <Trash2 size={18} />
                 LIMPAR
               </button>
-              <button 
+              <button
                 onClick={() => setShowResults(true)}
                 className="flex items-center gap-2 px-6 py-2 bg-primary text-primary-foreground rounded font-medium hover:bg-primary/90 transition-colors"
               >
@@ -131,6 +138,15 @@ const SearchMenu = () => {
           </div>
         </div>
       </div>
+      <div
+        className="absolute -bottom-72 -right-0 w-[600px] h-[600px] pointer-events-none z-[1]"
+        style={{
+          backgroundImage: `url(${backgroundCircle})`,
+          backgroundSize: '330px',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: '115% center',
+        }}
+      />
     </section>
   );
 };
