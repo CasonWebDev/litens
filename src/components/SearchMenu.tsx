@@ -1,8 +1,11 @@
-import { Search, Trash2 } from "lucide-react";
+import { Search, Trash2, X } from "lucide-react";
 import { useState } from "react";
+import SearchResults from "./SearchResults";
 
 const SearchMenu = () => {
-  const [activeTab, setActiveTab] = useState<"codigo" | "veiculo">("veiculo");
+  const [activeTab, setActiveTab] = useState<"codigo" | "veiculo">("codigo");
+  const [searchValue, setSearchValue] = useState("920");
+  const [showResults, setShowResults] = useState(true);
 
   return (
     <section className="bg-secondary py-8 md:py-12">
@@ -47,10 +50,16 @@ const SearchMenu = () => {
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={20} />
                   <input
                     type="text"
+                    value={searchValue}
+                    onChange={(e) => setSearchValue(e.target.value)}
                     placeholder="BUSCA POR CÓDIGO DA PEÇA"
                     className="w-full pl-12 pr-4 py-3 border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                   />
                 </div>
+                <label className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <X size={14} className="border border-muted-foreground" />
+                  BUSCA POR QUALQUER PARTE DO CÓDIGO DA PEÇA
+                </label>
               </div>
             ) : (
               <div className="flex flex-col gap-4">
@@ -101,15 +110,24 @@ const SearchMenu = () => {
 
             {/* Action Buttons */}
             <div className="flex justify-center gap-4 mt-6">
-              <button className="flex items-center gap-2 px-6 py-2 border-2 border-primary text-primary rounded font-medium hover:bg-primary hover:text-primary-foreground transition-colors">
+              <button 
+                onClick={() => { setSearchValue(""); setShowResults(false); }}
+                className="flex items-center gap-2 px-6 py-2 border-2 border-primary text-primary rounded font-medium hover:bg-primary hover:text-primary-foreground transition-colors"
+              >
                 <Trash2 size={18} />
                 LIMPAR
               </button>
-              <button className="flex items-center gap-2 px-6 py-2 bg-primary text-primary-foreground rounded font-medium hover:bg-primary/90 transition-colors">
+              <button 
+                onClick={() => setShowResults(true)}
+                className="flex items-center gap-2 px-6 py-2 bg-primary text-primary-foreground rounded font-medium hover:bg-primary/90 transition-colors"
+              >
                 <Search size={18} />
                 BUSCAR
               </button>
             </div>
+
+            {/* Search Results */}
+            {showResults && activeTab === "codigo" && <SearchResults />}
           </div>
         </div>
       </div>
