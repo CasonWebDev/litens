@@ -1,5 +1,14 @@
 import { createRoot } from "react-dom/client";
-import App from "./App.tsx";
 import "./index.css";
 
-createRoot(document.getElementById("root")!).render(<App />);
+const root = createRoot(document.getElementById("root")!);
+
+if (window.location.pathname.startsWith("/admin")) {
+    import("./admin/AdminApp").then(({ default: AdminApp }) => {
+        root.render(<AdminApp />);
+    });
+} else {
+    import("./app/App").then(({ default: App }) => {
+        root.render(<App />);
+    });
+}
