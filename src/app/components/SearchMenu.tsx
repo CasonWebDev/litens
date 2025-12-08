@@ -4,6 +4,7 @@ import bgLinhas from "@/app/assets/bglinhas.png";
 import backgroundCircle from "@/app/assets/background-circle.png";
 import { toast } from "sonner";
 import SearchResults from "./SearchResults";
+import { useLanguage } from "@/app/contexts/LanguageContext";
 
 interface ProductResult {
   id: number;
@@ -19,6 +20,7 @@ const SearchMenu = () => {
   const [results, setResults] = useState<ProductResult[]>([]);
   const [hasSearched, setHasSearched] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { t } = useLanguage();
 
   const handleSearch = async () => {
     if (!searchValue.trim()) return;
@@ -60,7 +62,7 @@ const SearchMenu = () => {
           {/* Header */}
           <div className="bg-primary py-4 px-6">
             <h2 className="text-primary-foreground text-xl md:text-2xl font-bold text-center">
-              MENU DE BUSCA
+              {t('search.title').toUpperCase()}
             </h2>
           </div>
 
@@ -73,7 +75,7 @@ const SearchMenu = () => {
                 : "text-muted-foreground hover:text-primary"
                 }`}
             >
-              CÓDIGO DA PEÇA
+              {t('search.tab_code')}
             </button>
             <button
               onClick={() => setActiveTab("veiculo")}
@@ -82,7 +84,7 @@ const SearchMenu = () => {
                 : "text-muted-foreground hover:text-primary"
                 }`}
             >
-              VEÍCULO
+              {t('search.tab_vehicle')}
             </button>
           </div>
 
@@ -93,22 +95,26 @@ const SearchMenu = () => {
                 <div className="relative">
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={20} />
                   <input
+                    id="search-code"
+                    name="searchCode"
                     type="text"
                     value={searchValue}
                     onChange={(e) => setSearchValue(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                    placeholder="BUSCA POR CÓDIGO DA PEÇA"
+                    placeholder={t('search.placeholder').toUpperCase()}
                     className="w-full pl-12 pr-4 py-3 font-bold border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                   />
                 </div>
                 <label className="flex items-center gap-2 text-sm text-muted-foreground font-bold cursor-pointer">
                   <input
+                    id="search-fuzzy"
+                    name="searchFuzzy"
                     type="checkbox"
                     checked={isFuzzy}
                     onChange={(e) => setIsFuzzy(e.target.checked)}
                     className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary"
                   />
-                  BUSCA POR QUALQUER PARTE DO CÓDIGO DA PEÇA
+                  {t('search.fuzzy')}
                 </label>
               </div>
             ) : (
@@ -116,8 +122,10 @@ const SearchMenu = () => {
                 <div className="relative">
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={20} />
                   <input
+                    id="search-vehicle"
+                    name="searchVehicle"
                     type="text"
-                    placeholder="BUSCA POR VEÍCULO"
+                    placeholder={t('search.placeholder_vehicle')}
                     className="w-full pl-12 pr-4 py-3 font-bold border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                   />
                 </div>
@@ -125,33 +133,33 @@ const SearchMenu = () => {
                 {/* Filters */}
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-3 font-bold">
                   <div>
-                    <label className="block text-xs text-muted-foreground mb-1 uppercase">Segmento</label>
+                    <label className="block text-xs text-muted-foreground mb-1 uppercase">{t('search.filter_segment')}</label>
                     <select className="w-full px-3 py-2 border border-border rounded text-sm text-foreground bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
-                      <option>Selecionar</option>
+                      <option>{t('search.select_option')}</option>
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs text-muted-foreground mb-1 uppercase">Marca</label>
+                    <label className="block text-xs text-muted-foreground mb-1 uppercase">{t('search.filter_brand')}</label>
                     <select className="w-full px-3 py-2 border border-border rounded text-sm text-foreground bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
-                      <option>Selecionar</option>
+                      <option>{t('search.select_option')}</option>
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs text-muted-foreground mb-1 uppercase">Nome Veículo</label>
+                    <label className="block text-xs text-muted-foreground mb-1 uppercase">{t('search.filter_name')}</label>
                     <select className="w-full px-3 py-2 border border-border rounded text-sm text-foreground bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
-                      <option>Selecionar</option>
+                      <option>{t('search.select_option')}</option>
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs text-muted-foreground mb-1 uppercase">Ano Venda</label>
+                    <label className="block text-xs text-muted-foreground mb-1 uppercase">{t('search.filter_year')}</label>
                     <select className="w-full px-3 py-2 border border-border rounded text-sm text-foreground bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
-                      <option>Selecionar</option>
+                      <option>{t('search.select_option')}</option>
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs text-muted-foreground mb-1 uppercase">Modelo Veículo</label>
+                    <label className="block text-xs text-muted-foreground mb-1 uppercase">{t('search.filter_model')}</label>
                     <select className="w-full px-3 py-2 border border-border rounded text-sm text-foreground bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
-                      <option>Selecionar</option>
+                      <option>{t('search.select_option')}</option>
                     </select>
                   </div>
                 </div>
@@ -165,7 +173,7 @@ const SearchMenu = () => {
                 className="flex items-center gap-2 px-6 py-2 border-2 border-primary text-primary rounded font-bold hover:bg-primary hover:text-primary-foreground transition-colors"
               >
                 <Trash2 size={18} />
-                LIMPAR
+                {t('search.clear')}
               </button>
               <button
                 onClick={handleSearch}
@@ -173,7 +181,7 @@ const SearchMenu = () => {
                 className="flex items-center gap-2 px-6 py-2 bg-primary text-primary-foreground rounded font-bold hover:bg-primary/90 transition-colors disabled:opacity-50"
               >
                 <Search size={18} />
-                {loading ? "BUSCANDO..." : "BUSCAR"}
+                {loading ? t('search.loading').toUpperCase() : t('search.button').toUpperCase()}
               </button>
             </div>
 
