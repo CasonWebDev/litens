@@ -12,7 +12,8 @@ const path = require('path');
 
 app.use(cors());
 app.use(express.json());
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// Serve uploads from project root (one level up from server directory)
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Initialize DB
 initDb();

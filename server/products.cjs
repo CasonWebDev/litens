@@ -14,7 +14,15 @@ const storage = multer.diskStorage({
     filename: function (req, file, cb) {
         const ext = path.extname(file.originalname);
         const name = path.basename(file.originalname, ext);
-        cb(null, `${name}-${Date.now()}${ext}`)
+
+        // Sanitize: ASCII only, lowercase, replace spaces with hyphens, remove special chars
+        const sanitized = name.normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Remove accents
+            .toLowerCase()
+            .replace(/[^a-z0-9]/g, "-") // Replace non-alphanumeric with hyphen
+            .replace(/-+/g, "-") // Collapse multiple hyphens
+            .replace(/^-|-$/g, ""); // Trim hyphens
+
+        cb(null, `${sanitized}-${Date.now()}${ext}`)
     }
 });
 
@@ -24,6 +32,12 @@ const cpUpload = upload.fields([
     { name: 'foto_produto_2', maxCount: 1 },
     { name: 'foto_produto_3', maxCount: 1 }
 ]);
+
+// Upload Single File
+router.post('/upload', upload.single('file'), (req, res) => {
+    if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+    res.json({ filename: req.file.filename });
+});
 
 // GET all products
 router.get('/', (req, res) => {
@@ -339,10 +353,14 @@ router.put('/:id', cpUpload, (req, res) => {
     if (files['foto_produto_2']?.[0]) productData.foto_produto_2 = files['foto_produto_2'][0].filename;
     if (files['foto_produto_3']?.[0]) productData.foto_produto_3 = files['foto_produto_3'][0].filename;
 
+    // Filter out id and relations from body if present
+    // We must exclude keys that are not columns in the products table
+    const nonColumnKeys = ['id', 'relations', 'vehicles', 'references'];
+    nonColumnKeys.forEach(key => delete productData[key]);
+
     const keys = Object.keys(productData);
     const values = Object.values(productData);
 
-    // Filter out id from body if present to avoid overwriting primary key
     // Construct SET clause
     const setClause = keys.map(key => `${key} = ?`).join(', ');
     const query = `UPDATE products SET ${setClause} WHERE id = ?`;

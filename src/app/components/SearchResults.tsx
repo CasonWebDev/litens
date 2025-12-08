@@ -48,18 +48,48 @@ interface SearchResultsProps {
 
 import { Star, ChevronDown, ChevronLeft, ChevronRight, Check } from "lucide-react";
 import oapImage from "@/app/assets/products/oap.png";
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { toast } from "sonner";
 
 const SearchResults = ({ products }: SearchResultsProps) => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [loadingDetails, setLoadingDetails] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Derive valid images from selected product
+  const validImages = useMemo(() => {
+    if (!selectedProduct) return [];
+    const images = [
+      selectedProduct.foto_produto,
+      selectedProduct.foto_produto_2,
+      selectedProduct.foto_produto_3
+    ].filter(Boolean); // Filter out null/undefined/empty strings
+    return images;
+  }, [selectedProduct]);
+
+  useEffect(() => {
+    // Reset state when product changes
+    setImageError(false);
+    setCurrentImageIndex(0);
+  }, [selectedProduct]);
+
+  const handleNextImage = () => {
+    if (validImages.length <= 1) return;
+    setCurrentImageIndex((prev) => (prev + 1) % validImages.length);
+    setImageError(false);
+  };
+
+  const handlePrevImage = () => {
+    if (validImages.length <= 1) return;
+    setCurrentImageIndex((prev) => (prev - 1 + validImages.length) % validImages.length);
+    setImageError(false);
+  };
 
   const fetchProductDetails = async (product: Product) => {
     // Optimistic update for UI responsiveness (shows partial data while loading)
     setSelectedProduct(product);
-    setImageError(false); // Reset error state on new selection
+    // State reset is handled by useEffect now
     setLoadingDetails(true);
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/products/${product.id}`);
@@ -307,10 +337,10 @@ const SearchResults = ({ products }: SearchResultsProps) => {
               <div className="bg-primary text-primary-foreground py-2 px-3 font-bold text-sm text-center">
                 FOTO DO PRODUTO
               </div>
-              <div className="h-48 flex flex-col items-center justify-center p-4 bg-background">
-                {selectedProduct.foto_produto && !imageError ? (
+              <div className="h-48 flex flex-col items-center justify-center p-4 bg-background relative group">
+                {validImages.length > 0 && !imageError ? (
                   <img
-                    src={`${import.meta.env.VITE_API_URL}/uploads/${selectedProduct.foto_produto}`}
+                    src={`${import.meta.env.VITE_API_URL}/uploads/${validImages[currentImageIndex]}`}
                     alt={selectedProduct.descricao_produto}
                     className="w-32 h-32 object-contain"
                     onError={() => setImageError(true)}
@@ -320,14 +350,29 @@ const SearchResults = ({ products }: SearchResultsProps) => {
                     {imageError ? "Imagem indisponível" : "Sem foto"}
                   </div>
                 )}
-                <div className="flex gap-2 mt-3">
-                  <button className="w-6 h-6 bg-primary text-primary-foreground rounded flex items-center justify-center text-xs hover:bg-primary/90 transition-colors">
-                    <ChevronLeft size={14} />
-                  </button>
-                  <button className="w-6 h-6 bg-primary text-primary-foreground rounded flex items-center justify-center text-xs hover:bg-primary/90 transition-colors">
-                    <ChevronRight size={14} />
-                  </button>
-                </div>
+
+                {/* Carousel Controls */}
+                {validImages.length > 1 && (
+                  <div className="flex gap-4 mt-3">
+                    <button
+                      onClick={handlePrevImage}
+                      className="w-8 h-8 bg-primary/10 hover:bg-primary text-primary hover:text-primary-foreground rounded-full flex items-center justify-center transition-colors"
+                      title="Foto anterior"
+                    >
+                      <ChevronLeft size={16} />
+                    </button>
+                    <div className="text-xs text-muted-foreground flex items-center">
+                      {currentImageIndex + 1} / {validImages.length}
+                    </div>
+                    <button
+                      onClick={handleNextImage}
+                      className="w-8 h-8 bg-primary/10 hover:bg-primary text-primary hover:text-primary-foreground rounded-full flex items-center justify-center transition-colors"
+                      title="Próxima foto"
+                    >
+                      <ChevronRight size={16} />
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>

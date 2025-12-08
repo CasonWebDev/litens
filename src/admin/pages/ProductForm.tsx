@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Trash2 } from "lucide-react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/app/components/ui/button";
@@ -96,10 +97,36 @@ const ProductForm = () => {
         setFormData((prev: any) => ({ ...prev, [name]: value }));
     };
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const [uploading, setUploading] = useState<{ [key: string]: boolean }>({});
+
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, files: fileList } = e.target;
         if (fileList && fileList[0]) {
-            setFiles(prev => ({ ...prev, [name]: fileList[0] }));
+            const file = fileList[0];
+            setUploading(prev => ({ ...prev, [name]: true }));
+
+            const uploadFormData = new FormData();
+            uploadFormData.append('file', file);
+
+            try {
+                const res = await fetch(`${import.meta.env.VITE_API_URL}/api/products/upload`, {
+                    method: 'POST',
+                    body: uploadFormData
+                });
+
+                if (!res.ok) throw new Error("Upload failed");
+
+                const data = await res.json();
+                setFormData((prev: any) => ({ ...prev, [name]: data.filename }));
+                toast.success("Imagem enviada com sucesso!");
+            } catch (error) {
+                console.error(error);
+                toast.error("Erro ao enviar imagem");
+            } finally {
+                setUploading(prev => ({ ...prev, [name]: false }));
+                // Clear input value to allow re-upload of same file if needed
+                e.target.value = "";
+            }
         }
     };
 
@@ -118,10 +145,10 @@ const ProductForm = () => {
                 }
             });
 
-            // Append files
-            if (files.foto_produto) formDataToSend.append('foto_produto', files.foto_produto);
-            if (files.foto_produto_2) formDataToSend.append('foto_produto_2', files.foto_produto_2);
-            if (files.foto_produto_3) formDataToSend.append('foto_produto_3', files.foto_produto_3);
+            // Append files - No longer needed as we upload immediately
+            // if (files.foto_produto) formDataToSend.append('foto_produto', files.foto_produto);
+            // if (files.foto_produto_2) formDataToSend.append('foto_produto_2', files.foto_produto_2);
+            // if (files.foto_produto_3) formDataToSend.append('foto_produto_3', files.foto_produto_3);
 
             const res = await fetch(url, {
                 method,
@@ -156,6 +183,49 @@ const ProductForm = () => {
     if (isEdit && isLoadingProduct) return <div>Carregando...</div>;
 
 
+
+    const handleRemoveImage = (fieldName: string) => {
+        setFormData((prev: any) => ({ ...prev, [fieldName]: "" }));
+        setFiles(prev => ({ ...prev, [fieldName]: null }));
+        // Reset file input if needed, though state drive is enough for logic, UI input might show file name still.
+        // We can use a key on the input to force reset or just rely on the fact that we're replacing the logic.
+    };
+
+    const renderImageField = (fieldName: string, label: string) => (
+        <div className="space-y-2">
+            <Label>{label}</Label>
+            <div className="flex gap-2 items-center">
+                <Input type="file" name={fieldName} onChange={handleFileChange} className="text-sm" disabled={uploading[fieldName]} />
+                {formData[fieldName] && !uploading[fieldName] && (
+                    <Button
+                        type="button"
+                        variant="destructive"
+                        size="icon"
+                        onClick={() => handleRemoveImage(fieldName)}
+                        title="Remover imagem"
+                    >
+                        <Trash2 size={16} />
+                    </Button>
+                )}
+            </div>
+            {uploading[fieldName] ? (
+                <div className="mt-2 h-32 flex items-center justify-center border rounded bg-gray-50 text-muted-foreground text-xs animate-pulse">
+                    Enviando...
+                </div>
+            ) : formData[fieldName] && (
+                <div className="relative group">
+                    <img
+                        src={`${import.meta.env.VITE_API_URL}/uploads/${formData[fieldName]}`}
+                        alt="Preview"
+                        className="w-full h-32 object-contain border rounded mt-2 bg-gray-50"
+                        onError={(e) => {
+                            (e.target as HTMLImageElement).src = "https://placehold.co/400x300?text=Imagem+Indisponível";
+                        }}
+                    />
+                </div>
+            )}
+        </div>
+    );
 
     return (
         <div className="p-6 max-w-4xl mx-auto">
@@ -226,21 +296,9 @@ const ProductForm = () => {
 
                             <TabsContent value="midia" className="space-y-4 pt-4">
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                    <div className="space-y-2">
-                                        <Label>Foto Principal</Label>
-                                        <Input type="file" name="foto_produto" onChange={handleFileChange} />
-                                        {formData.foto_produto && <img src={`${import.meta.env.VITE_API_URL}/uploads/${formData.foto_produto}`} alt="Preview" className="w-full h-32 object-contain border rounded mt-2" />}
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label>Foto 2</Label>
-                                        <Input type="file" name="foto_produto_2" onChange={handleFileChange} />
-                                        {formData.foto_produto_2 && <img src={`${import.meta.env.VITE_API_URL}/uploads/${formData.foto_produto_2}`} alt="Preview" className="w-full h-32 object-contain border rounded mt-2" />}
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label>Foto 3</Label>
-                                        <Input type="file" name="foto_produto_3" onChange={handleFileChange} />
-                                        {formData.foto_produto_3 && <img src={`${import.meta.env.VITE_API_URL}/uploads/${formData.foto_produto_3}`} alt="Preview" className="w-full h-32 object-contain border rounded mt-2" />}
-                                    </div>
+                                    {renderImageField("foto_produto", "Foto Principal")}
+                                    {renderImageField("foto_produto_2", "Foto 2")}
+                                    {renderImageField("foto_produto_3", "Foto 3")}
                                 </div>
                             </TabsContent>
 
