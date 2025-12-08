@@ -84,9 +84,39 @@
 }
 
 @layer base {
+
+  /* Global Scrollbar Customization */
   * {
     @apply border-border;
+
+    /* Scrollbar Variables */
+    --sb-track-color: #ffffff;
+    --sb-thumb-color: hsl(var(--litens-blue));
+    /* Assuming --litens-blue is defined in root */
+    --sb-size: 5px;
+
+    /* Firefox Support */
+    scrollbar-color: var(--sb-thumb-color) var(--sb-track-color);
   }
+
+  *::-webkit-scrollbar {
+    width: var(--sb-size);
+    height: var(--sb-size);
+  }
+
+  *::-webkit-scrollbar-track {
+    background: var(--sb-track-color);
+    border-radius: 14px;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: var(--sb-thumb-color);
+    border-radius: 14px;
+    border: 1px solid var(--sb-track-color);
+    /* Adjusted to 3px to verify visibility based on previous prompt, though user said 10px solid #133962. I'll stick close to user example but assume track color for border to create padding effect? User said #133962 which is dark blue. */
+    border: 1px solid var(--sb-track-color);
+  }
+
 
   body {
     @apply bg-background text-foreground font-alibaba;

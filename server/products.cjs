@@ -27,15 +27,20 @@ const cpUpload = upload.fields([
 
 // GET all products
 router.get('/', (req, res) => {
-    const { search, page = 1, limit = 20 } = req.query;
+    const { search, page = 1, limit = 20, exact } = req.query;
     const offset = (page - 1) * limit;
 
     let whereClause = "";
     let params = [];
 
     if (search) {
-        whereClause = " WHERE codigo_produto LIKE ? OR descricao_produto LIKE ?";
-        params = [`%${search}%`, `%${search}%`];
+        if (exact === 'true') {
+            whereClause = " WHERE codigo_produto_grid = ?";
+            params = [search];
+        } else {
+            whereClause = " WHERE codigo_produto_grid LIKE ? OR descricao_produto LIKE ?";
+            params = [`%${search}%`, `%${search}%`];
+        }
     }
 
     const countQuery = `SELECT count(*) as total FROM products${whereClause}`;
@@ -86,18 +91,44 @@ router.post('/seed', (req, res) => {
 // Actually, I'll replace the whole file content to be safe and clean, or I can add a specific relations seed route.
 // Let's add endpoints first.
 
-// GET single product with relations
+// GET single product with relations and details
 router.get('/:id', (req, res) => {
     const { id } = req.params;
     db.get("SELECT * FROM products WHERE id = ?", [id], (err, row) => {
         if (err) return res.status(500).json({ error: err.message });
         if (!row) return res.status(404).json({ error: 'Product not found' });
 
-        db.all("SELECT * FROM product_relations WHERE main_product_code = ?", [row.codigo_produto], (err, relations) => {
-            if (err) return res.status(500).json({ error: err.message });
-            row.relations = relations;
-            res.json(row);
-        });
+        const queries = [
+            new Promise((resolve, reject) => {
+                db.all("SELECT * FROM product_relations WHERE main_product_code = ?", [row.codigo_produto], (err, rows) => {
+                    if (err) reject(err);
+                    else resolve({ key: 'relations', data: rows });
+                });
+            }),
+            new Promise((resolve, reject) => {
+                db.all("SELECT * FROM vehicles WHERE product_code = ?", [row.codigo_produto], (err, rows) => {
+                    if (err) reject(err);
+                    else resolve({ key: 'vehicles', data: rows });
+                });
+            }),
+            new Promise((resolve, reject) => {
+                db.all("SELECT * FROM reference_numbers WHERE product_code = ?", [row.codigo_produto], (err, rows) => {
+                    if (err) reject(err);
+                    else resolve({ key: 'references', data: rows });
+                });
+            })
+        ];
+
+        Promise.all(queries)
+            .then(results => {
+                results.forEach(result => {
+                    row[result.key] = result.data;
+                });
+                res.json(row);
+            })
+            .catch(err => {
+                res.status(500).json({ error: err.message });
+            });
     });
 });
 

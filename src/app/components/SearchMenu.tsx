@@ -1,13 +1,50 @@
 import { Search, Trash2, X } from "lucide-react";
 import { useState } from "react";
-import SearchResults from "./SearchResults";
 import bgLinhas from "@/app/assets/bglinhas.png";
 import backgroundCircle from "@/app/assets/background-circle.png";
+import { toast } from "sonner";
+import SearchResults from "./SearchResults";
+
+interface ProductResult {
+  id: number;
+  codigo_produto_grid: string;
+  descricao_produto: string;
+  produto_lancamento: string;
+}
 
 const SearchMenu = () => {
   const [activeTab, setActiveTab] = useState<"codigo" | "veiculo">("codigo");
-  const [searchValue, setSearchValue] = useState("920");
-  const [showResults, setShowResults] = useState(true);
+  const [searchValue, setSearchValue] = useState("");
+  const [isFuzzy, setIsFuzzy] = useState(false);
+  const [results, setResults] = useState<ProductResult[]>([]);
+  const [hasSearched, setHasSearched] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleSearch = async () => {
+    if (!searchValue.trim()) return;
+
+    setLoading(true);
+    setHasSearched(true);
+    try {
+      const exact = !isFuzzy;
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/products?search=${encodeURIComponent(searchValue)}&exact=${exact}&limit=100`);
+      if (!res.ok) throw new Error("Erro na busca");
+      const data = await res.json();
+      setResults(data.data);
+    } catch (error) {
+      console.error(error);
+      toast.error("Erro ao buscar produtos");
+      setResults([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const clearSearch = () => {
+    setSearchValue("");
+    setResults([]);
+    setHasSearched(false);
+  };
 
   return (
     <section className="bg-secondary py-8 md:py-12"
@@ -59,12 +96,18 @@ const SearchMenu = () => {
                     type="text"
                     value={searchValue}
                     onChange={(e) => setSearchValue(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                     placeholder="BUSCA POR CÓDIGO DA PEÇA"
                     className="w-full pl-12 pr-4 py-3 font-bold border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                   />
                 </div>
-                <label className="flex items-center gap-2 text-sm text-muted-foreground font-bold">
-                  <X size={14} className="border border-muted-foreground" />
+                <label className="flex items-center gap-2 text-sm text-muted-foreground font-bold cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={isFuzzy}
+                    onChange={(e) => setIsFuzzy(e.target.checked)}
+                    className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary"
+                  />
                   BUSCA POR QUALQUER PARTE DO CÓDIGO DA PEÇA
                 </label>
               </div>
@@ -118,28 +161,31 @@ const SearchMenu = () => {
             {/* Action Buttons */}
             <div className="flex justify-center gap-4 mt-6">
               <button
-                onClick={() => { setSearchValue(""); setShowResults(false); }}
+                onClick={clearSearch}
                 className="flex items-center gap-2 px-6 py-2 border-2 border-primary text-primary rounded font-bold hover:bg-primary hover:text-primary-foreground transition-colors"
               >
                 <Trash2 size={18} />
                 LIMPAR
               </button>
               <button
-                onClick={() => setShowResults(true)}
-                className="flex items-center gap-2 px-6 py-2 bg-primary text-primary-foreground rounded font-bold hover:bg-primary/90 transition-colors"
+                onClick={handleSearch}
+                disabled={loading}
+                className="flex items-center gap-2 px-6 py-2 bg-primary text-primary-foreground rounded font-bold hover:bg-primary/90 transition-colors disabled:opacity-50"
               >
                 <Search size={18} />
-                BUSCAR
+                {loading ? "BUSCANDO..." : "BUSCAR"}
               </button>
             </div>
 
             {/* Search Results */}
-            {showResults && activeTab === "codigo" && <SearchResults />}
+            {hasSearched && activeTab === "codigo" && (
+              <SearchResults products={results} />
+            )}
           </div>
         </div>
       </div>
       <div
-        className="absolute -bottom-72 -right-0 w-[600px] h-[600px] pointer-events-none z-[1]"
+        className="absolute -bottom-[15vh] -right-0 w-[600px] h-[600px] pointer-events-none z-[1]"
         style={{
           backgroundImage: `url(${backgroundCircle})`,
           backgroundSize: '300px',
