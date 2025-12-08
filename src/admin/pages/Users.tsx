@@ -20,7 +20,7 @@ const Users = () => {
     const { data: users, isLoading, error } = useQuery({
         queryKey: ['users'],
         queryFn: async () => {
-            const res = await fetch("http://localhost:3000/api/users", {
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/users`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (res.status === 403) throw new Error("Acesso negado");
@@ -31,7 +31,7 @@ const Users = () => {
 
     const deleteMutation = useMutation({
         mutationFn: async (id: number) => {
-            const res = await fetch(`http://localhost:3000/api/users/${id}`, {
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/users/${id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });

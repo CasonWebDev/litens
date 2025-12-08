@@ -18,7 +18,7 @@ const ReferenceForm = () => {
     const { data: reference, isLoading } = useQuery({
         queryKey: ['reference', id],
         queryFn: async () => {
-            const res = await fetch(`http://localhost:3000/api/references/${id}`);
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/references/${id}`);
             if (!res.ok) throw new Error("Failed to fetch");
             return res.json();
         },
@@ -38,7 +38,7 @@ const ReferenceForm = () => {
 
     const mutation = useMutation({
         mutationFn: async (data: any) => {
-            const url = isEdit ? `http://localhost:3000/api/references/${id}` : `http://localhost:3000/api/references`;
+            const url = isEdit ? `${import.meta.env.VITE_API_URL}/api/references/${id}` : `${import.meta.env.VITE_API_URL}/api/references`;
             const method = isEdit ? 'PUT' : 'POST';
 
             const res = await fetch(url, {

@@ -23,7 +23,7 @@ const UserForm = () => {
     const { data: user, isLoading, error } = useQuery({
         queryKey: ['user', id],
         queryFn: async () => {
-            const res = await fetch(`http://localhost:3000/api/users/${id}`, {
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/users/${id}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (!res.ok) throw new Error("Falha ao carregar usuário");
@@ -41,7 +41,7 @@ const UserForm = () => {
 
     const mutation = useMutation({
         mutationFn: async (data: any) => {
-            const url = isEdit ? `http://localhost:3000/api/users/${id}` : `http://localhost:3000/api/users`;
+            const url = isEdit ? `${import.meta.env.VITE_API_URL}/api/users/${id}` : `${import.meta.env.VITE_API_URL}/api/users`;
             const method = isEdit ? 'PUT' : 'POST';
 
             const res = await fetch(url, {

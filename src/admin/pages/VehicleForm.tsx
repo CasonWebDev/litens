@@ -18,7 +18,7 @@ const VehicleForm = () => {
     const { data: vehicle, isLoading: isLoadingVehicle } = useQuery({
         queryKey: ['vehicle', id],
         queryFn: async () => {
-            const res = await fetch(`http://localhost:3000/api/vehicles/${id}`);
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/vehicles/${id}`);
             if (!res.ok) throw new Error("Failed to fetch");
             return res.json();
         },
@@ -38,7 +38,7 @@ const VehicleForm = () => {
 
     const mutation = useMutation({
         mutationFn: async (data: any) => {
-            const url = isEdit ? `http://localhost:3000/api/vehicles/${id}` : `http://localhost:3000/api/vehicles`;
+            const url = isEdit ? `${import.meta.env.VITE_API_URL}/api/vehicles/${id}` : `${import.meta.env.VITE_API_URL}/api/vehicles`;
             const method = isEdit ? 'PUT' : 'POST';
 
             const res = await fetch(url, {

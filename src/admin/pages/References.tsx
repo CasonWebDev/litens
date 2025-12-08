@@ -30,7 +30,7 @@ const References = () => {
                 limit: '20',
                 search: debouncedSearch
             });
-            const res = await fetch(`http://localhost:3000/api/references?${params}`);
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/references?${params}`);
             if (!res.ok) throw new Error("Failed to fetch references");
             return res.json();
         }
@@ -38,7 +38,7 @@ const References = () => {
 
     const deleteMutation = useMutation({
         mutationFn: async (id: number) => {
-            const res = await fetch(`http://localhost:3000/api/references/${id}`, {
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/references/${id}`, {
                 method: 'DELETE'
             });
             if (!res.ok) throw new Error("Failed to delete");

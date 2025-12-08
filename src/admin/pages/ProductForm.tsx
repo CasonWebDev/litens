@@ -15,7 +15,7 @@ const RelationsManager = ({ id, relations, onUpdate }: { id: string, relations: 
     const addRelation = async () => {
         if (!newRelation) return;
         try {
-            const res = await fetch(`http://localhost:3000/api/products/${id}/relations`, {
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/products/${id}/relations`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ relatedCode: newRelation })
@@ -32,7 +32,7 @@ const RelationsManager = ({ id, relations, onUpdate }: { id: string, relations: 
     const removeRelation = async (code: string) => {
         if (!confirm("Remover este relacionamento?")) return;
         try {
-            const res = await fetch(`http://localhost:3000/api/products/${id}/relations/${code}`, {
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/products/${id}/relations/${code}`, {
                 method: 'DELETE'
             });
             if (!res.ok) throw new Error("Erro ao remover");
@@ -78,7 +78,7 @@ const ProductForm = () => {
     const { data: product, isLoading: isLoadingProduct } = useQuery({
         queryKey: ['product', id],
         queryFn: async () => {
-            const res = await fetch(`http://localhost:3000/api/products/${id}`);
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/products/${id}`);
             if (!res.ok) throw new Error("Failed to fetch");
             return res.json();
         },
@@ -105,7 +105,7 @@ const ProductForm = () => {
 
     const mutation = useMutation({
         mutationFn: async (data: any) => {
-            const url = isEdit ? `http://localhost:3000/api/products/${id}` : `http://localhost:3000/api/products`;
+            const url = isEdit ? `${import.meta.env.VITE_API_URL}/api/products/${id}` : `${import.meta.env.VITE_API_URL}/api/products`;
             const method = isEdit ? 'PUT' : 'POST';
 
             const formDataToSend = new FormData();
@@ -229,17 +229,17 @@ const ProductForm = () => {
                                     <div className="space-y-2">
                                         <Label>Foto Principal</Label>
                                         <Input type="file" name="foto_produto" onChange={handleFileChange} />
-                                        {formData.foto_produto && <img src={`http://localhost:3000/uploads/${formData.foto_produto}`} alt="Preview" className="w-full h-32 object-contain border rounded mt-2" />}
+                                        {formData.foto_produto && <img src={`${import.meta.env.VITE_API_URL}/uploads/${formData.foto_produto}`} alt="Preview" className="w-full h-32 object-contain border rounded mt-2" />}
                                     </div>
                                     <div className="space-y-2">
                                         <Label>Foto 2</Label>
                                         <Input type="file" name="foto_produto_2" onChange={handleFileChange} />
-                                        {formData.foto_produto_2 && <img src={`http://localhost:3000/uploads/${formData.foto_produto_2}`} alt="Preview" className="w-full h-32 object-contain border rounded mt-2" />}
+                                        {formData.foto_produto_2 && <img src={`${import.meta.env.VITE_API_URL}/uploads/${formData.foto_produto_2}`} alt="Preview" className="w-full h-32 object-contain border rounded mt-2" />}
                                     </div>
                                     <div className="space-y-2">
                                         <Label>Foto 3</Label>
                                         <Input type="file" name="foto_produto_3" onChange={handleFileChange} />
-                                        {formData.foto_produto_3 && <img src={`http://localhost:3000/uploads/${formData.foto_produto_3}`} alt="Preview" className="w-full h-32 object-contain border rounded mt-2" />}
+                                        {formData.foto_produto_3 && <img src={`${import.meta.env.VITE_API_URL}/uploads/${formData.foto_produto_3}`} alt="Preview" className="w-full h-32 object-contain border rounded mt-2" />}
                                     </div>
                                 </div>
                             </TabsContent>
