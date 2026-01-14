@@ -13,8 +13,13 @@ interface ProductResult {
   produto_lancamento: string;
 }
 
-const SearchMenu = () => {
-  const [activeTab, setActiveTab] = useState<"codigo" | "veiculo">("codigo");
+interface SearchMenuProps {
+  activeTab: "codigo" | "veiculo";
+  onTabChange: (tab: "codigo" | "veiculo") => void;
+}
+
+const SearchMenu = ({ activeTab, onTabChange }: SearchMenuProps) => {
+  // const [activeTab, setActiveTab] = useState<"codigo" | "veiculo">("codigo"); // Removed local state
   const [searchValue, setSearchValue] = useState("");
   const [isFuzzy, setIsFuzzy] = useState(false);
   const [results, setResults] = useState<ProductResult[]>([]);
@@ -69,7 +74,7 @@ const SearchMenu = () => {
           {/* Tabs */}
           <div className="flex justify-center gap-8 py-4 border-b border-border">
             <button
-              onClick={() => setActiveTab("codigo")}
+              onClick={() => onTabChange("codigo")}
               className={`text-sm md:text-base font-bold transition-colors ${activeTab === "codigo"
                 ? "text-primary border-b-2 border-primary pb-1"
                 : "text-muted-foreground hover:text-primary"
@@ -78,7 +83,7 @@ const SearchMenu = () => {
               {t('search.tab_code')}
             </button>
             <button
-              onClick={() => setActiveTab("veiculo")}
+              onClick={() => onTabChange("veiculo")}
               className={`text-sm md:text-base font-bold transition-colors ${activeTab === "veiculo"
                 ? "text-primary border-b-2 border-primary pb-1"
                 : "text-muted-foreground hover:text-primary"

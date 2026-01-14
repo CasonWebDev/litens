@@ -8,12 +8,12 @@ import idlerImg from "@/app/assets/products/idler.png";
 import tbtImg from "@/app/assets/products/tbt.png";
 
 const products = [
-  { name: "ADT", image: adtImg },
-  { name: "OAP", image: oapImg },
-  { name: "TORQFILTR™", image: torqfiltrImg },
-  { name: "OAD™", image: oadImg },
-  { name: "IDLER", image: idlerImg },
-  { name: "TBT", image: tbtImg },
+  { name: "TENSIONADOR DO SISTEMA DE ACESSÓRIOS ADT", image: adtImg },
+  { name: "POLIA DO ALTERNADOR RODA LIVRE OAP", image: oapImg },
+  { name: "POLIA DO VIRABREQUIM DESACLOPADORA TORQFILTR™", image: torqfiltrImg },
+  { name: "POLIA DO ALTERNADOR DESACOPLADORA OAD™", image: oadImg },
+  { name: "POLIA DO SISTEMA DE SINCRONISMO E ACESSÓRIOS", image: idlerImg },
+  { name: "TENSIONADOR DO SISTEMA DE SINCRONISMO TBT", image: tbtImg },
 ];
 
 const ProductsCarousel = () => {
@@ -37,7 +37,7 @@ const ProductsCarousel = () => {
           <div className="grid grid-cols-3 md:grid-cols-6 gap-4 md:gap-6 px-8 md:px-12">
             {products.map((product, index) => (
               <div key={index} className="flex flex-col items-center group cursor-pointer">
-                <div className="w-20 h-20 md:w-28 md:h-28 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+                <div className="flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
                   <img
                     src={product.image}
                     alt={product.name}
