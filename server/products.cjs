@@ -41,19 +41,69 @@ router.post('/upload', upload.single('file'), (req, res) => {
 
 // GET all products
 router.get('/', (req, res) => {
-    const { search, page = 1, limit = 20, exact } = req.query;
+    const { search, page = 1, limit = 20, exact, manufacturer, segment, vehicle_name, year } = req.query;
     const offset = (page - 1) * limit;
 
-    let whereClause = "";
+    let whereClause = " WHERE 1=1";
     let params = [];
 
+    // General Search
     if (search) {
         if (exact === 'true') {
-            whereClause = " WHERE codigo_produto_grid = ?";
-            params = [search];
+            whereClause += " AND codigo_produto_grid = ?";
+            params.push(search);
         } else {
-            whereClause = " WHERE codigo_produto_grid LIKE ? OR descricao_produto LIKE ?";
-            params = [`%${search}%`, `%${search}%`];
+            whereClause += ` AND (
+                codigo_produto_grid LIKE ? OR 
+                descricao_produto LIKE ? OR
+                EXISTS (
+                    SELECT 1 FROM vehicles v 
+                    WHERE v.product_code = products.codigo_produto 
+                    AND (v.vehicle_description LIKE ? OR v.manufacturer LIKE ? OR v.segment LIKE ?)
+                )
+            )`;
+            const term = `%${search}%`;
+            params.push(term, term, term, term, term);
+        }
+    }
+
+    // Specific Vehicle Filters
+    if (manufacturer || segment || vehicle_name || year) {
+        let vehicleConditions = [];
+        let vehicleParams = [];
+
+        if (manufacturer) {
+            vehicleConditions.push("v.manufacturer = ?");
+            vehicleParams.push(manufacturer);
+        }
+        if (segment) {
+            vehicleConditions.push("v.segment = ?");
+            vehicleParams.push(segment);
+        }
+        if (vehicle_name) {
+            vehicleConditions.push("v.vehicle_description = ?");
+            vehicleParams.push(vehicle_name);
+        }
+        if (year) {
+            // Check if year falls within start/end range, or just matches start?
+            // "year" usually implies "fits this year".
+            // vehicle table has start_year, end_year.
+            // If DB year is int, we compare.
+            // Condition: year >= start_year AND (year <= end_year OR end_year IS NULL/Empty)
+            // But for simplicity based on previous metadata 'start_year', maybe just match start_year?
+            // User filter says "Year". Metadata comes from "SELECT DISTINCT start_year".
+            // So we probably just match start_year.
+            vehicleConditions.push("v.start_year = ?");
+            vehicleParams.push(year);
+        }
+
+        if (vehicleConditions.length > 0) {
+            whereClause += ` AND EXISTS (
+                SELECT 1 FROM vehicles v 
+                WHERE v.product_code = products.codigo_produto 
+                AND ${vehicleConditions.join(' AND ')}
+            )`;
+            params.push(...vehicleParams);
         }
     }
 
@@ -62,7 +112,7 @@ router.get('/', (req, res) => {
 
     db.get(countQuery, params, (err, countRow) => {
         if (err) return res.status(500).json({ error: err.message });
-        const total = countRow.total;
+        const total = countRow ? countRow.total : 0;
 
         db.all(dataQuery, [...params, limit, offset], (err, rows) => {
             if (err) return res.status(500).json({ error: err.message });

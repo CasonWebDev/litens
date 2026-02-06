@@ -1,5 +1,5 @@
 import { Search, Trash2, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import bgLinhas from "@/app/assets/bglinhas.png";
 import backgroundCircle from "@/app/assets/background-circle.png";
 import { toast } from "sonner";
@@ -18,23 +18,99 @@ interface SearchMenuProps {
   onTabChange: (tab: "codigo" | "veiculo") => void;
 }
 
+interface FilterOptions {
+  segments: string[];
+  manufacturers: string[];
+  names: string[];
+  years: (string | number)[];
+}
+
 const SearchMenu = ({ activeTab, onTabChange }: SearchMenuProps) => {
-  // const [activeTab, setActiveTab] = useState<"codigo" | "veiculo">("codigo"); // Removed local state
   const [searchValue, setSearchValue] = useState("");
-  const [isFuzzy, setIsFuzzy] = useState(false);
+  const [vehicleSearch, setVehicleSearch] = useState("");
+  const [isFuzzy, setIsFuzzy] = useState(true);
   const [results, setResults] = useState<ProductResult[]>([]);
   const [hasSearched, setHasSearched] = useState(false);
   const [loading, setLoading] = useState(false);
   const { t } = useLanguage();
 
+  const [filterOptions, setFilterOptions] = useState<FilterOptions>({
+    segments: [],
+    manufacturers: [],
+    names: [],
+    years: []
+  });
+
+  const [filters, setFilters] = useState({
+    segment: "",
+    brand: "",
+    name: "",
+    year: "",
+    model: ""
+  });
+
+  useEffect(() => {
+    const fetchFilters = async () => {
+      try {
+        const res = await fetch(`${(import.meta.env.VITE_API_URL || "")}/api/vehicles/metadata`);
+        if (res.ok) {
+          const data = await res.json();
+          setFilterOptions({
+            segments: data.segments || [],
+            manufacturers: data.manufacturers || [],
+            names: data.names || [],
+            years: data.years || []
+          });
+        }
+      } catch (error) {
+        console.error("Failed to load filters", error);
+      }
+    };
+    fetchFilters();
+  }, []);
+
+  const handleFilterChange = (key: string, value: string) => {
+    setFilters(prev => ({ ...prev, [key]: value }));
+  };
+
   const handleSearch = async () => {
-    if (!searchValue.trim()) return;
+    let query = activeTab === "codigo" ? searchValue : vehicleSearch;
+    let endpoint = "";
+
+    // If Code tab, require input
+    if (activeTab === "codigo" && !query.trim()) return;
+
+    // If Vehicle tab, allow empty main search if filters are present
+    if (activeTab === "veiculo" && !query.trim()) {
+      const hasFilter = Object.values(filters).some(Boolean);
+      if (!hasFilter) return;
+    }
 
     setLoading(true);
     setHasSearched(true);
+
     try {
-      const exact = !isFuzzy;
-      const res = await fetch(`${(import.meta.env.VITE_API_URL || "")}/api/products?search=${encodeURIComponent(searchValue)}&exact=${exact}&limit=100`);
+      if (activeTab === "veiculo") {
+        const params = new URLSearchParams();
+        if (vehicleSearch.trim()) params.append("search", vehicleSearch);
+
+        if (filters.brand) params.append("manufacturer", filters.brand);
+        if (filters.segment) params.append("segment", filters.segment);
+        if (filters.name) params.append("vehicle_name", filters.name);
+        if (filters.year) params.append("year", filters.year);
+        // Model can map to vehicle_name or just be ignored if redundant
+
+        const exact = !isFuzzy;
+        params.append("exact", String(exact));
+        params.append("limit", "100");
+
+        endpoint = `/api/products?${params.toString()}`;
+      } else {
+        const exact = !isFuzzy;
+        endpoint = `/api/products?search=${encodeURIComponent(query)}&exact=${exact}&limit=100`;
+      }
+
+      const res = await fetch(`${(import.meta.env.VITE_API_URL || "")}${endpoint}`);
       if (!res.ok) throw new Error("Erro na busca");
       const data = await res.json();
       setResults(data.data);
@@ -49,6 +125,14 @@ const SearchMenu = ({ activeTab, onTabChange }: SearchMenuProps) => {
 
   const clearSearch = () => {
     setSearchValue("");
+    setVehicleSearch("");
+    setFilters({
+      segment: "",
+      brand: "",
+      name: "",
+      year: "",
+      model: ""
+    });
     setResults([]);
     setHasSearched(false);
   };
@@ -130,6 +214,9 @@ const SearchMenu = ({ activeTab, onTabChange }: SearchMenuProps) => {
                     id="search-vehicle"
                     name="searchVehicle"
                     type="text"
+                    value={vehicleSearch}
+                    onChange={(e) => setVehicleSearch(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                     placeholder={t('search.placeholder_vehicle')}
                     className="w-full pl-12 pr-4 py-3 font-bold border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
                   />
@@ -139,32 +226,63 @@ const SearchMenu = ({ activeTab, onTabChange }: SearchMenuProps) => {
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-3 font-bold">
                   <div>
                     <label className="block text-xs text-muted-foreground mb-1 uppercase">{t('search.filter_segment')}</label>
-                    <select className="w-full px-3 py-2 border border-border rounded text-sm text-foreground bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
-                      <option>{t('search.select_option')}</option>
+                    <select
+                      value={filters.segment}
+                      onChange={(e) => handleFilterChange("segment", e.target.value)}
+                      className="w-full px-3 py-2 border border-border rounded text-sm text-foreground bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                      <option value="">{t('search.select_option')}</option>
+                      {filterOptions.segments.map((opt, i) => (
+                        <option key={i} value={opt}>{opt}</option>
+                      ))}
                     </select>
                   </div>
                   <div>
                     <label className="block text-xs text-muted-foreground mb-1 uppercase">{t('search.filter_brand')}</label>
-                    <select className="w-full px-3 py-2 border border-border rounded text-sm text-foreground bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
-                      <option>{t('search.select_option')}</option>
+                    <select
+                      value={filters.brand}
+                      onChange={(e) => handleFilterChange("brand", e.target.value)}
+                      className="w-full px-3 py-2 border border-border rounded text-sm text-foreground bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                      <option value="">{t('search.select_option')}</option>
+                      {filterOptions.manufacturers.map((opt, i) => (
+                        <option key={i} value={opt}>{opt}</option>
+                      ))}
                     </select>
                   </div>
                   <div>
                     <label className="block text-xs text-muted-foreground mb-1 uppercase">{t('search.filter_name')}</label>
-                    <select className="w-full px-3 py-2 border border-border rounded text-sm text-foreground bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
-                      <option>{t('search.select_option')}</option>
+                    <select
+                      value={filters.name}
+                      onChange={(e) => handleFilterChange("name", e.target.value)}
+                      className="w-full px-3 py-2 border border-border rounded text-sm text-foreground bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                      <option value="">{t('search.select_option')}</option>
+                      {filterOptions.names.map((opt, i) => (
+                        <option key={i} value={opt}>{opt}</option>
+                      ))}
                     </select>
                   </div>
                   <div>
                     <label className="block text-xs text-muted-foreground mb-1 uppercase">{t('search.filter_year')}</label>
-                    <select className="w-full px-3 py-2 border border-border rounded text-sm text-foreground bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
-                      <option>{t('search.select_option')}</option>
+                    <select
+                      value={filters.year}
+                      onChange={(e) => handleFilterChange("year", e.target.value)}
+                      className="w-full px-3 py-2 border border-border rounded text-sm text-foreground bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                      <option value="">{t('search.select_option')}</option>
+                      {filterOptions.years.map((opt, i) => (
+                        <option key={i} value={String(opt)}>{opt}</option>
+                      ))}
                     </select>
                   </div>
                   <div>
                     <label className="block text-xs text-muted-foreground mb-1 uppercase">{t('search.filter_model')}</label>
-                    <select className="w-full px-3 py-2 border border-border rounded text-sm text-foreground bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
-                      <option>{t('search.select_option')}</option>
+                    <select
+                      value={filters.model}
+                      onChange={(e) => handleFilterChange("model", e.target.value)}
+                      className="w-full px-3 py-2 border border-border rounded text-sm text-foreground bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
+                      <option value="">{t('search.select_option')}</option>
+                      {/* Using names for model as fallback since I don't have a distinct model list separate from names yet */}
+                      {filterOptions.names.map((opt, i) => (
+                        <option key={i} value={opt}>{opt}</option>
+                      ))}
                     </select>
                   </div>
                 </div>
@@ -191,7 +309,7 @@ const SearchMenu = ({ activeTab, onTabChange }: SearchMenuProps) => {
             </div>
 
             {/* Search Results */}
-            {hasSearched && activeTab === "codigo" && (
+            {hasSearched && (
               <SearchResults products={results} />
             )}
           </div>
@@ -209,5 +327,4 @@ const SearchMenu = ({ activeTab, onTabChange }: SearchMenuProps) => {
     </section>
   );
 };
-
 export default SearchMenu;

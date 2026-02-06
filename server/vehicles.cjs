@@ -72,6 +72,37 @@ router.post('/seed-vehicles', (req, res) => {
         });
 });
 
+// Get metadata for filters
+router.get('/metadata', (req, res) => {
+    const queries = {
+        segments: "SELECT DISTINCT segment FROM vehicles WHERE segment IS NOT NULL AND segment != '' ORDER BY segment",
+        manufacturers: "SELECT DISTINCT manufacturer FROM vehicles WHERE manufacturer IS NOT NULL AND manufacturer != '' ORDER BY manufacturer",
+        names: "SELECT DISTINCT vehicle_description FROM vehicles WHERE vehicle_description IS NOT NULL AND vehicle_description != '' ORDER BY vehicle_description",
+        years: "SELECT DISTINCT start_year FROM vehicles WHERE start_year IS NOT NULL AND start_year != '' ORDER BY start_year"
+    };
+
+    const results = {};
+    let completed = 0;
+    const keys = Object.keys(queries);
+
+    if (keys.length === 0) return res.json({});
+
+    keys.forEach(key => {
+        db.all(queries[key], (err, rows) => {
+            if (err) {
+                console.error(`Error fetching ${key}:`, err);
+                results[key] = [];
+            } else {
+                results[key] = rows.map(r => Object.values(r)[0]);
+            }
+            completed++;
+            if (completed === keys.length) {
+                res.json(results);
+            }
+        });
+    });
+});
+
 // List vehicles
 router.get('/', (req, res) => {
     const page = parseInt(req.query.page) || 1;
