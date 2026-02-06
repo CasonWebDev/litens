@@ -34,7 +34,7 @@ const SearchMenu = ({ activeTab, onTabChange }: SearchMenuProps) => {
     setHasSearched(true);
     try {
       const exact = !isFuzzy;
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/products?search=${encodeURIComponent(searchValue)}&exact=${exact}&limit=100`);
+      const res = await fetch(`${(import.meta.env.VITE_API_URL || "")}/api/products?search=${encodeURIComponent(searchValue)}&exact=${exact}&limit=100`);
       if (!res.ok) throw new Error("Erro na busca");
       const data = await res.json();
       setResults(data.data);

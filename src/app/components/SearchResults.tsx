@@ -110,7 +110,7 @@ const SearchResults = ({ products }: SearchResultsProps) => {
     // State reset is handled by useEffect now
     setLoadingDetails(true);
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/products/${product.id}`);
+      const res = await fetch(`${(import.meta.env.VITE_API_URL || "")}/api/products/${product.id}`);
       if (!res.ok) throw new Error("Erro ao buscar detalhes");
       const fullProduct = await res.json();
       setSelectedProduct(fullProduct);
@@ -358,7 +358,7 @@ const SearchResults = ({ products }: SearchResultsProps) => {
               <div className="h-48 flex flex-col items-center justify-center p-4 bg-background relative group">
                 {validImages.length > 0 && !imageError ? (
                   <img
-                    src={`${import.meta.env.VITE_API_URL}/uploads/${validImages[currentImageIndex]}`}
+                    src={`${(import.meta.env.VITE_API_URL || "")}/uploads/${validImages[currentImageIndex]}`}
                     alt={selectedProduct.descricao_produto}
                     className="w-32 h-32 object-contain"
                     onError={() => setImageError(true)}

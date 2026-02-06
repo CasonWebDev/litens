@@ -40,7 +40,7 @@ const Products = () => {
     const { data: response, isLoading, error } = useQuery({
         queryKey: ['products', debouncedSearch, page],
         queryFn: async () => {
-            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/products?search=${debouncedSearch}&page=${page}&limit=20`);
+            const res = await fetch(`${(import.meta.env.VITE_API_URL || "")}/api/products?search=${debouncedSearch}&page=${page}&limit=20`);
             if (!res.ok) throw new Error("Falha ao buscar produtos");
             return res.json() as Promise<ProductsResponse>;
         }
@@ -53,7 +53,7 @@ const Products = () => {
 
     const deleteMutation = useMutation({
         mutationFn: async (id: number) => {
-            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/products/${id}`, { method: 'DELETE' });
+            const res = await fetch(`${(import.meta.env.VITE_API_URL || "")}/api/products/${id}`, { method: 'DELETE' });
             if (!res.ok) throw new Error("Falha ao excluir produto");
         },
         onSuccess: () => {
@@ -116,7 +116,7 @@ const Products = () => {
                                 <TableRow key={product.id}>
                                     <TableCell>
                                         {product.foto_produto ? (
-                                            <img src={`${import.meta.env.VITE_API_URL}/uploads/${product.foto_produto}`} alt="" className="w-12 h-12 object-cover rounded" />
+                                            <img src={`${(import.meta.env.VITE_API_URL || "")}/uploads/${product.foto_produto}`} alt="" className="w-12 h-12 object-cover rounded" />
                                         ) : (
                                             <div className="w-12 h-12 bg-gray-100 rounded flex items-center justify-center text-xs text-gray-400">Sem foto</div>
                                         )}

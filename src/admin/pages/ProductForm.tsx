@@ -16,7 +16,7 @@ const RelationsManager = ({ id, relations, onUpdate }: { id: string, relations: 
     const addRelation = async () => {
         if (!newRelation) return;
         try {
-            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/products/${id}/relations`, {
+            const res = await fetch(`${(import.meta.env.VITE_API_URL || "")}/api/products/${id}/relations`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ relatedCode: newRelation })
@@ -33,7 +33,7 @@ const RelationsManager = ({ id, relations, onUpdate }: { id: string, relations: 
     const removeRelation = async (code: string) => {
         if (!confirm("Remover este relacionamento?")) return;
         try {
-            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/products/${id}/relations/${code}`, {
+            const res = await fetch(`${(import.meta.env.VITE_API_URL || "")}/api/products/${id}/relations/${code}`, {
                 method: 'DELETE'
             });
             if (!res.ok) throw new Error("Erro ao remover");
@@ -79,7 +79,7 @@ const ProductForm = () => {
     const { data: product, isLoading: isLoadingProduct } = useQuery({
         queryKey: ['product', id],
         queryFn: async () => {
-            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/products/${id}`);
+            const res = await fetch(`${(import.meta.env.VITE_API_URL || "")}/api/products/${id}`);
             if (!res.ok) throw new Error("Failed to fetch");
             return res.json();
         },
@@ -109,7 +109,7 @@ const ProductForm = () => {
             uploadFormData.append('file', file);
 
             try {
-                const res = await fetch(`${import.meta.env.VITE_API_URL}/api/products/upload`, {
+                const res = await fetch(`${(import.meta.env.VITE_API_URL || "")}/api/products/upload`, {
                     method: 'POST',
                     body: uploadFormData
                 });
@@ -132,7 +132,7 @@ const ProductForm = () => {
 
     const mutation = useMutation({
         mutationFn: async (data: any) => {
-            const url = isEdit ? `${import.meta.env.VITE_API_URL}/api/products/${id}` : `${import.meta.env.VITE_API_URL}/api/products`;
+            const url = isEdit ? `${(import.meta.env.VITE_API_URL || "")}/api/products/${id}` : `${(import.meta.env.VITE_API_URL || "")}/api/products`;
             const method = isEdit ? 'PUT' : 'POST';
 
             const formDataToSend = new FormData();
@@ -215,7 +215,7 @@ const ProductForm = () => {
             ) : formData[fieldName] && (
                 <div className="relative group">
                     <img
-                        src={`${import.meta.env.VITE_API_URL}/uploads/${formData[fieldName]}`}
+                        src={`${(import.meta.env.VITE_API_URL || "")}/uploads/${formData[fieldName]}`}
                         alt="Preview"
                         className="w-full h-32 object-contain border rounded mt-2 bg-gray-50"
                         onError={(e) => {

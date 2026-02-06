@@ -32,7 +32,7 @@ const Vehicles = () => {
                 limit: '20',
                 search: debouncedSearch
             });
-            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/vehicles?${params}`);
+            const res = await fetch(`${(import.meta.env.VITE_API_URL || "")}/api/vehicles?${params}`);
             if (!res.ok) throw new Error("Failed to fetch vehicles");
             return res.json();
         }
@@ -40,7 +40,7 @@ const Vehicles = () => {
 
     const deleteMutation = useMutation({
         mutationFn: async (id: number) => {
-            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/vehicles/${id}`, {
+            const res = await fetch(`${(import.meta.env.VITE_API_URL || "")}/api/vehicles/${id}`, {
                 method: 'DELETE'
             });
             if (!res.ok) throw new Error("Failed to delete");
